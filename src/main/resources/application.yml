@@ -14,6 +14,7 @@ spring:
       username: SECURITY
       password: SECURITY
 
+
   jpa:
     show-sql: true
     hibernate:
