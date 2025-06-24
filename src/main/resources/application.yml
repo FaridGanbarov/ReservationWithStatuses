@@ -1,1 +1,49 @@
-spring.application.name=AsanXidmet
+spring:
+  application:
+    name: AsanXidmet
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      password: ecommerce-redis-p@ss
+      timeout: 60000
+      client-type:
+  datasource:
+    first:
+      url: jdbc:postgresql://localhost:5437/User
+      username: SECURITY
+      password: SECURITY
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: faridqanbarov3@gmail.com
+    password: ghfs orqj yyyf envz
+    properties:
+      mail.transport.protocol: smtp
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.debug: true
+
+security:
+  key: "jvdIc8VZQrh6T17RAywe6e/3u7wQ/WEXIUuLD1FWYo01yQcjjmjOBfwY/KeHu5cBaNMeJI0pZIMOwNCQuVnMvQ=="
+
+refresh-token:
+  expiration: 2592000000
+
+access-token:
+  expiration: 600000
+
+verification-code:
+  expiration: 300000
+
+activation-token:
+  expiration: 864000000
+
+server:
+  port: 8081

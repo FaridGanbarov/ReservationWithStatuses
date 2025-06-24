@@ -1,2 +1,11 @@
-package practice.asanxidmet.authentication.dto.response;public class AuthResponse {
+package practice.asanxidmet.authentication.dto.response;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class AuthResponse {
+    private String accessToken;
+    private String refreshToken;
 }

@@ -1,2 +1,119 @@
-package practice.asanxidmet.service.impl;public class EmailServiceImpl {
+package practice.asanxidmet.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+import practice.asanxidmet.cache.service.RedisActivationTokenService;
+import practice.asanxidmet.cache.service.RedisVerificationService;
+import practice.asanxidmet.dto.request.EmailActivationRequest;
+import practice.asanxidmet.dto.request.EmailRequest;
+import practice.asanxidmet.entity.User;
+import practice.asanxidmet.entity.UserEmail;
+import practice.asanxidmet.enums.Exceptions;
+import practice.asanxidmet.exception.ApplicationException;
+import practice.asanxidmet.repository.EmailRepository;
+import practice.asanxidmet.repository.UserRepository;
+import practice.asanxidmet.service.EmailService;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class EmailServiceImpl implements EmailService {
+
+    @Value("faridqanbarov3@gmail.com")
+    private String from;
+    private final JavaMailSender mailSender;
+    private final RedisVerificationService redisVerificationService;
+    private final EmailRepository emailRepository;
+    private final UserRepository userRepository;
+    private final RedisActivationTokenService redisActivationTokenService;
+    @Override
+    public void sendVerificationCode(String email) {
+        User userEmail = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ApplicationException(Exceptions.USER_NOT_FOUND));
+        String verificationCode = createVerificationCode();
+        String subject = "Şifrə dəyişikliyini təsdiqləmə kodunuz";
+        String text = "təsdiqləmə kodu: " + verificationCode;
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setSubject(subject);
+        message.setText(text);
+        message.setTo(userEmail.getEmail());
+        mailSender.send(message);
+        redisVerificationService.storeEmailVerificationCode(email, verificationCode);
+    }
+
+    @Override
+    public void sendActivationLink(String email) {
+        var userEmail = emailRepository.findByEmail(email);
+        if (userEmail.isEmpty()) {
+            String token = generateActivationToken();
+            String activationUrl = generateActivationLink(token);
+            SimpleMailMessage message = new SimpleMailMessage();
+            String myEmail = from;
+            message.setFrom(myEmail);
+            message.setSubject("Hesabınızı aktivləşdirin");
+            message.setText("Hesabınızı aktivləşdirmək üçün linkə klikləyin: " + activationUrl);
+            message.setTo(email);
+            mailSender.send(message);
+            redisActivationTokenService.storeActivationToken(email, token);
+        } else throw new ApplicationException(Exceptions.USER_ALREADY_EXIST);
+    }
+
+    @Override
+    public void registerEmail(EmailRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()
+                || emailRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ApplicationException(Exceptions.USER_ALREADY_EXIST);
+        }
+        UserEmail userEmail = UserEmail.builder()
+                .email(request.getEmail())
+                .verified(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+        sendActivationLink(userEmail.getEmail());
+
+        emailRepository.save(userEmail);
+    }
+
+    @Override
+    public void activateEmail(EmailActivationRequest request) {
+        String storedToken = redisActivationTokenService.getActivationToken(request.getEmail());
+
+        if (storedToken == null || !storedToken.equals(request.getToken())) {
+            throw new ApplicationException(Exceptions.INVALID_TOKEN_EXCEPTION);
+        }
+
+        UserEmail userEmail = emailRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ApplicationException(Exceptions.USER_NOT_FOUND));
+
+        userEmail.setVerified(true);
+
+        emailRepository.save(userEmail);
+        redisActivationTokenService.deleteActivationToken(request.getEmail());
+    }
+
+    @Override
+    public void deleteStoredEmail(String email) {
+        emailRepository.deleteByEmail(email);
+    }
+    private String createVerificationCode() {
+        Random random = new Random();
+        int verificationCode = 1000 + random.nextInt(9000);
+        return String.valueOf(verificationCode);
+    }
+
+    private String generateActivationToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    private String generateActivationLink(String activationToken) {
+        return "https://ff82f4df-f72b-4dec-84ca-487132aff620.mock.pstmn.io/api/v1/auth/activate?token=" + activationToken;
+
+    }
 }

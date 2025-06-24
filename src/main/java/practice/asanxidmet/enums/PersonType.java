@@ -1,2 +1,7 @@
-package practice.asanxidmet.enums;public enum PersonType {
+package practice.asanxidmet.enums;
+
+public enum PersonType {
+    REGULAR,
+    QAZI,
+    SHEHID_AILESI
 }

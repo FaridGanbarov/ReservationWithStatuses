@@ -1,4 +1,12 @@
-FROM ubuntu:latest
-LABEL authors="User"
-
-ENTRYPOINT ["top", "-b"]
+services:
+  redis:
+    image: docker.io/bitnami/redis:7.2
+    environment:
+      - REDIS_PASSWORD=ecommerce-redis-p@ss
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6380:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+volumes:
+  redis_data: {}
