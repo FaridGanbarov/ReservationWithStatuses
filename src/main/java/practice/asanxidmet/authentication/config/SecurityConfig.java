@@ -1,4 +1,4 @@
-package practice.asanxidmet.config;
+package practice.asanxidmet.authentication.config;
 
 
 import lombok.RequiredArgsConstructor;

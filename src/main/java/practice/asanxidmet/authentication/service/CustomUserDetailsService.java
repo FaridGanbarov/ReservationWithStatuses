@@ -3,10 +3,12 @@ package practice.asanxidmet.authentication.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 import practice.asanxidmet.authentication.model.CustomUserDetails;
 import practice.asanxidmet.entity.User;
 import practice.asanxidmet.repository.UserRepository;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository repository;
 
