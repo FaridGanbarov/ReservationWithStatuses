@@ -33,6 +33,7 @@ spring:
       mail.smtp.starttls.enable: true
       mail.debug: true
 
+
 security:
   key: "jvdIc8VZQrh6T17RAywe6e/3u7wQ/WEXIUuLD1FWYo01yQcjjmjOBfwY/KeHu5cBaNMeJI0pZIMOwNCQuVnMvQ=="
 
