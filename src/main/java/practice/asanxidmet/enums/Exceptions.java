@@ -17,7 +17,12 @@ public enum Exceptions {
     TERMS_ACCEPTANCE_EXCEPTION(HttpStatus.BAD_REQUEST,ExceptionMessage.TERMS_ACCEPTANCE_EXCEPTION_MSG),
     IMAGE_STORAGE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionMessage.IMAGE_STORAGE_EXCEPTION_MSG),
     DIRECTORY_CREATION_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,ExceptionMessage.CREATE_DIRECTORY_ERROR_MSG),
-    INVALID_FORMAT_EXCEPTION(HttpStatus.BAD_REQUEST,ExceptionMessage.INVALID_FORMAT_EXCEPTION_MSG);
+    INVALID_FORMAT_EXCEPTION(HttpStatus.BAD_REQUEST,ExceptionMessage.INVALID_FORMAT_EXCEPTION_MSG),
+    USER_NOT_FOUND_BY_EMAIL(HttpStatus.NOT_FOUND, "User not found by email"),
+    RESERVATION_SLOT_ALREADY_TAKEN(HttpStatus.CONFLICT, "This time slot is already taken"),
+    TIME_SLOT_TAKEN(HttpStatus.CONFLICT, "This time slot is already taken"),
+    ALREADY_RESERVED_FOR_TODAY(HttpStatus.BAD_REQUEST, "You have already made a reservation for this day");
+
 
     private final HttpStatus httpStatus;
     private final String message;

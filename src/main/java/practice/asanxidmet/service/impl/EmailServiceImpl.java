@@ -116,4 +116,14 @@ public class EmailServiceImpl implements EmailService {
         return "https://ff82f4df-f72b-4dec-84ca-487132aff620.mock.pstmn.io/api/v1/auth/activate?token=" + activationToken;
 
     }
+
+    @Override
+    public void sendReservationNotification(String toEmail, String date, String time, String personType) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(toEmail);
+        message.setSubject("New Reservation");
+        message.setText("Reservation Details:\nDate: " + date + "\nTime: " + time + "\nPerson Type: " + personType);
+        mailSender.send(message);
+    }
 }
